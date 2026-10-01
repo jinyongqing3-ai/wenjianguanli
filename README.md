@@ -1,0 +1,42 @@
+# 文件管理网站 · 部署说明
+
+这是一个纯静态网站（只有 index.html），没有后端和数据库。
+用户的文件保存在各自浏览器的 IndexedDB 里，不会上传到服务器。
+
+> 注意：浏览器只在 HTTPS 或 localhost 下提供完整的存储功能，正式上线请启用 HTTPS。
+
+## 方式一：Docker（推荐）
+```bash
+docker compose up -d --build
+# 访问 http://服务器IP:8080
+```
+停止：`docker compose down`
+
+## 方式二：直接用 Nginx
+```bash
+sudo mkdir -p /var/www/file-manager
+sudo cp index.html /var/www/file-manager/
+sudo cp nginx.conf /etc/nginx/conf.d/file-manager.conf
+# 编辑该文件：root 改为 /var/www/file-manager，server_name 改为你的域名
+sudo nginx -t && sudo systemctl reload nginx
+```
+HTTPS：`sudo certbot --nginx -d your-domain.com`
+
+## 方式三：免费托管
+- **Vercel / Netlify**：把整个文件夹拖进控制台，或连接 Git 仓库，无需构建命令。
+- **GitHub Pages**：推送到 `main` 分支，并在仓库 Settings → Pages 里选择 “GitHub Actions”，工作流已写好。
+- **Cloudflare Pages**：上传文件夹，构建命令留空，输出目录填 `/`。
+
+## 本地预览
+```bash
+python3 -m http.server 8000   # 访问 http://localhost:8000
+```
+
+## 文件清单
+| 文件 | 用途 |
+|---|---|
+| index.html | 网站本体 |
+| Dockerfile / docker-compose.yml | 容器部署 |
+| nginx.conf | Nginx 配置（含压缩与安全头） |
+| vercel.json / netlify.toml | 托管平台配置 |
+| .github/workflows/pages.yml | GitHub Pages 自动部署 |

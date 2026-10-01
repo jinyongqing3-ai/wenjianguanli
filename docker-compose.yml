@@ -1,0 +1,7 @@
+services:
+  file-manager:
+    build: .
+    container_name: file-manager
+    ports:
+      - "8080:80"        # 访问 http://服务器IP:8080
+    restart: unless-stopped
